@@ -129,6 +129,3 @@ class Server:
 
         self.bot.dispatch("ipc_ready")
         self.loop.run_until_complete(server_coro)
-        
-        multicast_server = asyncio.start_server(self.client_connection_callback, host, 20000, loop=self.loop)
-        self.loop.run_until_complete(multicast_server)
