@@ -45,6 +45,7 @@ class Server:
     def __init__(self, bot, host, port, secret_key):
         self.bot = bot
         self.loop = bot.loop
+        self.server = None
 
         self.port = port
         self.host = host
@@ -123,9 +124,10 @@ class Server:
             
             break
     
-    def start(self, multicast=False):
+    async def start(self, multicast=False):
         host = self.host if not multicast else self.multicast_grp
-        server_coro = asyncio.start_server(self.client_connection_callback, host, self.port, loop=self.loop)
-
+        self.server = await asyncio.start_server(self.client_connection_callback, host, self.port, loop=self.loop)
         self.bot.dispatch("ipc_ready")
-        self.loop.run_until_complete(server_coro)
+    
+    def close(self):
+        self.server.close()
